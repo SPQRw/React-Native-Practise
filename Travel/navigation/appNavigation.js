@@ -20,6 +20,7 @@ export default function AppNavigation() {
   const { user } = useSelector((state) => state.user);
   console.log("user", user);
   const dispatch = useDispatch();
+
   onAuthStateChanged(auth, (user) => {
     console.log("got user", user);
     dispatch(setUser(user));
