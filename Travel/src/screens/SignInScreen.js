@@ -4,16 +4,19 @@ import ScreenWrapper from "../../components/screenWrapper";
 import { colors } from "../../theme";
 import BackButton from "../../components/backButton";
 import { useNavigation } from "@react-navigation/native";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { auth } from "../../config/firebase";
 
 export default function SignInScreen() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
   const navigation = useNavigation();
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (email && password) {
       // go
-      navigation.navigate("Home");
+      // navigation.navigate("Home");
+      await signInWithEmailAndPassword(auth, email, password);
     } else {
       // no
     }

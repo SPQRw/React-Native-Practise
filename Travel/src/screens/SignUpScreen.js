@@ -22,7 +22,7 @@ export default function SignInScreen() {
     } else {
       // Snackbar.show({
       //   text: "Hello world",
-      //   duration: Snackbar.LENGTH_SHORT,
+      //   backgroundColor: "red",
       // });
     }
   };
