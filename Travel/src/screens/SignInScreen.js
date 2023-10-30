@@ -4,18 +4,36 @@ import ScreenWrapper from "../../components/screenWrapper";
 import { colors } from "../../theme";
 import BackButton from "../../components/backButton";
 import { useNavigation } from "@react-navigation/native";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { auth } from "../../config/firebase";
+import { useDispatch, useSelector } from "react-redux";
+import Loading from "../../components/loading";
+import { setUserLoading } from "../../redux/slice/user";
 
 export default function SignInScreen() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  // const { userLoading } = useSelector((state) => state.userLoading);
 
   const navigation = useNavigation();
-  const handleSubmit = () => {
+
+  const dispatch = useDispatch();
+
+  const handleSubmit = async () => {
     if (email && password) {
       // go
-      navigation.navigate("Home");
+      // navigation.navigate("Home");
+      // try {
+      // dispatch(setUserLoading(true));
+      await signInWithEmailAndPassword(auth, email, password);
+      // dispatch(setUserLoading(false));
+      // } catch (e) {
+      // dispatch(setUserLoading(false));
+      // snackbar
+      // }
     } else {
       // no
+      // snackbaar
     }
   };
   return (

@@ -6,19 +6,27 @@ import BackButton from "../../components/backButton";
 import { useNavigation } from "@react-navigation/native";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../../config/firebase";
+import { useDispatch, useSelector } from "react-redux";
+import { setUserLoading } from "../../redux/slice/user";
 // import Snackbar from "react-native-snackbar";
 
 export default function SignInScreen() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
+  const { userLoading } = useSelector((state) => state.user);
+  const dispatch = useDispatch;
   const navigation = useNavigation();
 
   const handleSubmit = async () => {
     if (email && password) {
-      // go
-      // navigation.navigate("Home");
+      // try {
+      //   dispatch(setUserLoading(true));
       await createUserWithEmailAndPassword(auth, email, password);
+      // dispatch(setUserLoading(false));
+      // } catch (e) {
+      // dispatch(setUserLoading(false));
+      // snackbar
+      // }
     } else {
       // Snackbar.show({
       //   text: "Hello world",
@@ -65,6 +73,9 @@ export default function SignInScreen() {
         </View>
 
         <View>
+          {/* {userLoading ? (
+            <Loading></Loading>
+          ) : ( */}
           <TouchableOpacity
             onPress={handleSubmit}
             style={{ backgroundColor: colors.button }}
@@ -75,6 +86,7 @@ export default function SignInScreen() {
               Sign Up
             </Text>
           </TouchableOpacity>
+          {/* )} */}
         </View>
       </View>
     </ScreenWrapper>
