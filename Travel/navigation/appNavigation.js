@@ -19,10 +19,12 @@ const Stack = createNativeStackNavigator();
 export default function AppNavigation() {
   const user = useSelector((state) => state.user.user);
   const dispatch = useDispatch();
+
   onAuthStateChanged(auth, (u) => {
     console.log("got user", u);
-    dispatch(setUser(u));
+    dispatch(setUser(u))
   });
+
 
   if (user) {
     return (
