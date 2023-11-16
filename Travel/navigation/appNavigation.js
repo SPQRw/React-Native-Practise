@@ -11,9 +11,13 @@ import SignInScreen from "../src/screens/SignInScreen";
 import SignUpScreen from "../src/screens/SignUpScreen";
 import TripExpensesScreen from "../src/screens/TripExpensesScreen";
 import WelcomeScreen from "../src/screens/WelcomeScreen";
-import { onAuthStateChanged } from "firebase/auth";
-import { auth } from "../config/firebase";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
+
 import { setUser } from "../redux/slice/user";
+import app from "../config/firebase";
+
+const auth = getAuth(app);
+
 const Stack = createNativeStackNavigator();
 
 export default function AppNavigation() {
@@ -21,10 +25,8 @@ export default function AppNavigation() {
   const dispatch = useDispatch();
 
   onAuthStateChanged(auth, (u) => {
-    console.log("got user", u);
-    dispatch(setUser(u))
+    dispatch(setUser(u));
   });
-
 
   if (user) {
     return (

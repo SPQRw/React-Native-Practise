@@ -12,17 +12,31 @@ import { colors } from "../../theme";
 import BackButton from "../../components/backButton";
 import { useNavigation } from "@react-navigation/native";
 import { categories } from "../../constants";
+import { addDoc } from "firebase/firestore";
+import { expensesRef } from "../../config/firebase";
+import Loading from "../../components/loading";
 
-export default function AddTripsScreen() {
+export default function AddTripsScreen(props) {
+  let { id } = props.route.params;
   const [title, setTitle] = useState("");
   const [amount, setAmount] = useState("");
   const [category, setCategory] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const navigation = useNavigation();
-  const handleAddExpense = () => {
+
+  const handleAddExpense = async () => {
     if (title && amount && category) {
       // go
-      navigation.goBack();
+      setLoading(true);
+      let doc = await addDoc(expensesRef, {
+        title,
+        amount,
+        category,
+        tripId: id,
+      });
+      setLoading(false);
+      if (doc && doc.id) navigation.goBack();
     } else {
       // no
     }
@@ -87,16 +101,20 @@ export default function AddTripsScreen() {
                 })}
               </View>
             </View>
-            <TouchableOpacity
-              onPress={handleAddExpense}
-              style={{ backgroundColor: colors.button }}
-              className="my-6 rounded-full p-3 mt-3 shadow-sm"
-              mx-2
-            >
-              <Text className="text-center text-white text-lg font-bold">
-                Add Expense
-              </Text>
-            </TouchableOpacity>
+            {loading ? (
+              <Loading />
+            ) : (
+              <TouchableOpacity
+                onPress={handleAddExpense}
+                style={{ backgroundColor: colors.button }}
+                className="my-6 rounded-full p-3 mt-3 shadow-sm"
+                mx-2
+              >
+                <Text className="text-center text-white text-lg font-bold">
+                  Add Expense
+                </Text>
+              </TouchableOpacity>
+            )}
           </ScrollView>
         </View>
       </View>

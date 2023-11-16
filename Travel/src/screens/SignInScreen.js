@@ -4,11 +4,13 @@ import ScreenWrapper from "../../components/screenWrapper";
 import { colors } from "../../theme";
 import BackButton from "../../components/backButton";
 import { useNavigation } from "@react-navigation/native";
-import { signInWithEmailAndPassword } from "firebase/auth";
-import { auth } from "../../config/firebase";
+import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import { useDispatch, useSelector } from "react-redux";
 import Loading from "../../components/loading";
 import { setUserLoading } from "../../redux/slice/user";
+import app from "../../config/firebase";
+
+const auth = getAuth(app);
 
 export default function SignInScreen() {
   const [email, setEmail] = useState("");
@@ -24,12 +26,11 @@ export default function SignInScreen() {
       // go
       // navigation.navigate("Home");
       // try {
-      // dispatch(setUserLoading(true));
+      //   dispatch(setUserLoading(true));
       await signInWithEmailAndPassword(auth, email, password);
-      // dispatch(setUserLoading(false));
+      //   dispatch(setUserLoading(false));
       // } catch (e) {
-      // dispatch(setUserLoading(false));
-      // snackbar
+      //   dispatch(setUserLoading(false));
       // }
     } else {
       // no
@@ -78,6 +79,9 @@ export default function SignInScreen() {
         </View>
 
         <View>
+          {/* {userLoading ? (
+            <Loading></Loading>
+          ) : ( */}
           <TouchableOpacity
             onPress={handleSubmit}
             style={{ backgroundColor: colors.button }}

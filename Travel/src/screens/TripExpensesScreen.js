@@ -6,14 +6,16 @@ import {
   Image,
   FlatList,
 } from "react-native";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import ScreenWrapper from "../../components/screenWrapper";
 import { colors } from "../../theme";
 import randomImage from "../../assets/image/randomImage";
 import EmptyList from "../../components/emptyList";
-import { useNavigation } from "@react-navigation/native";
+import { useIsFocused, useNavigation } from "@react-navigation/native";
 import BackButton from "../../components/backButton";
 import ExpenseCard from "../../components/expenseCard";
+import { getDocs, query, where } from "firebase/firestore";
+import { expensesRef } from "../../config/firebase";
 
 const items = [
   {
@@ -39,6 +41,24 @@ const items = [
 export default function TripExpensesScreen(props) {
   const { id, place, country } = props.route.params;
   const navigation = useNavigation();
+  const isFocused = useIsFocused();
+  const [expenses, setExpenses] = useState([]);
+
+  const fetchExpenses = async () => {
+    const q = query(expensesRef, where("tripId", "==", id));
+    const querySnapshot = await getDocs(q);
+    let data = [];
+    querySnapshot.forEach((doc) => {
+      // console.log('documement: ',doc.data());
+      data.push({ ...doc.data(), id: doc.id });
+    });
+    setExpenses(data);
+  };
+
+  useEffect(() => {
+    if (isFocused) fetchExpenses();
+  }, [isFocused]);
+
   return (
     <ScreenWrapper className="flex-1">
       <View className="px-4">
@@ -67,7 +87,9 @@ export default function TripExpensesScreen(props) {
               Expenses
             </Text>
             <TouchableOpacity
-              onPress={() => navigation.navigate("AddExpense")}
+              onPress={() =>
+                navigation.navigate("AddExpense", { id, place, country })
+              }
               className="p-2 px-3 bg-white border border-gray-200 rounded-full"
             >
               <Text className={colors.heading}>Add Expense</Text>
@@ -75,7 +97,7 @@ export default function TripExpensesScreen(props) {
           </View>
           <View style={{ height: 430 }}>
             <FlatList
-              data={items}
+              data={expenses}
               ListEmptyComponent={
                 <EmptyList
                   message={"you haven't got recorded any expenses yet"}

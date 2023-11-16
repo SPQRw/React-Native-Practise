@@ -4,16 +4,18 @@ import ScreenWrapper from "../../components/screenWrapper";
 import { colors } from "../../theme";
 import BackButton from "../../components/backButton";
 import { useNavigation } from "@react-navigation/native";
-import { createUserWithEmailAndPassword } from "firebase/auth";
-import { auth } from "../../config/firebase";
+import { createUserWithEmailAndPassword, getAuth } from "firebase/auth";
 import { useDispatch, useSelector } from "react-redux";
 import { setUserLoading } from "../../redux/slice/user";
 // import Snackbar from "react-native-snackbar";
+import app from "../../config/firebase";
+
+const auth = getAuth(app);
 
 export default function SignInScreen() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const { userLoading } = useSelector((state) => state.user);
+  // const { userLoading } = useSelector((state) => state.userLoading);
   const dispatch = useDispatch;
   const navigation = useNavigation();
 
@@ -22,15 +24,15 @@ export default function SignInScreen() {
       // try {
       //   dispatch(setUserLoading(true));
       await createUserWithEmailAndPassword(auth, email, password);
-      // dispatch(setUserLoading(false));
+      //   dispatch(setUserLoading(false));
       // } catch (e) {
-      // dispatch(setUserLoading(false));
-      // snackbar
+      //   dispatch(setUserLoading(false));
       // }
     } else {
       // Snackbar.show({
-      //   text: "Hello world",
+      //   text: "Email and Password are required",
       //   duration: Snackbar.LENGTH_SHORT,
+      //   backgroundColor: "red",
       // });
     }
   };

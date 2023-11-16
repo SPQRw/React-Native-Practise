@@ -6,14 +6,16 @@ import {
   Image,
   FlatList,
 } from "react-native";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import ScreenWrapper from "../../components/screenWrapper";
 import { colors } from "../../theme";
 import randomImage from "../../assets/image/randomImage";
 import EmptyList from "../../components/emptyList";
-import { useNavigation } from "@react-navigation/native";
-import { signOut } from "firebase/auth";
-import { auth } from "../../config/firebase";
+import { useIsFocused, useNavigation } from "@react-navigation/native";
+import { getAuth, signOut } from "firebase/auth";
+import app, { tripsRef } from "../../config/firebase";
+import { useSelector } from "react-redux";
+import { doc, getDocs, query, where } from "firebase/firestore";
 
 const items = [
   {
@@ -58,8 +60,30 @@ const items = [
   },
 ];
 
+const auth = getAuth(app);
+
 export default function HomeScreen() {
   const navigation = useNavigation();
+
+  const { user } = useSelector((state) => state.user);
+  const [trips, setTrips] = useState([]);
+
+  const isFocused = useIsFocused();
+
+  const fetchTrips = async () => {
+    const q = query(tripsRef, where("userId", "==", user.uid));
+    const querySnapshot = await getDocs(q);
+    let data = [];
+    querySnapshot.forEach((doc) => {
+      // console.log("doc str==", doc.data());
+      data.push({ ...doc.data(), id: doc.id });
+    });
+    setTrips(data);
+  };
+
+  useEffect(() => {
+    if (isFocused) fetchTrips();
+  }, [isFocused]);
 
   const handleLogout = async () => {
     await signOut(auth);
@@ -99,7 +123,7 @@ export default function HomeScreen() {
       </View>
       <View style={{ height: 430 }}>
         <FlatList
-          data={items}
+          data={trips}
           numColumns={2}
           ListEmptyComponent={
             <EmptyList message={"you haven't got recorded any trips yet"} />
